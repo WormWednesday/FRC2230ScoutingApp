@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:frc_scouting_app/views/big_screen_views/desktop_menu.dart';
 import 'package:frc_scouting_app/views/big_screen_views/scouting_screen/input_scouting_info/scouting_screen.dart';
+import 'package:frc_scouting_app/views/big_screen_views/teams_info/quick_data.dart';
 import 'package:frc_scouting_app/views/big_screen_views/top_bar_desktop.dart';
 import 'package:frc_scouting_app/views/common_views/responsive_layout.dart';
 
@@ -27,7 +28,7 @@ class App extends StatelessWidget{
             page: page,
           ),
         ),
-        mobileChild: ScoutingScreen()
+        mobileChild: QuickData()
       )
     );
   }

@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frc_scouting_app/Database/scouter_info_api.dart';
 import 'package:frc_scouting_app/misc/constants.dart';
-import 'package:frc_scouting_app/misc/teams_list.dart';
 import 'package:frc_scouting_app/views/big_screen_views/scouting_screen/input_scouting_info/shot_counter.dart';
 import 'package:frc_scouting_app/views/common_views/divider_with_text.dart';
-import 'package:http/io_client.dart';
 
 /* TODO: 
 Try https://pub.dev/packages/flutter_picker for phone 
@@ -14,26 +12,35 @@ make first screen history/adding new scouting entries, if admin you can make new
 */
 
 class ScoutingScreen extends StatefulWidget {
-  const ScoutingScreen({Key? key}) : super(key: key);
+
+  ScoutingScreen({
+    required this.matchId,
+    required this.competition,
+    required this.matchType,
+    required this.matchNumber,
+    required this.alliance,
+    required this.teamNumber
+  });
+
+  final String matchId;
+  final String competition;
+  final String matchType;
+  final String matchNumber;
+  final String alliance;
+  final String teamNumber;
 
   @override
   State<StatefulWidget> createState() => _ScoutingScreenState();
 }
 
 class _ScoutingScreenState extends State<ScoutingScreen > {
-  final List<DropdownMenuItem<String>> _teamsList = List.generate(teams.length, (index) => DropdownMenuItem(value: teams[index].num.toString(), child: Text('#${teams[index].num.toString()} ${teams[index].name}'),));
-  late String _chosenTeamNum;
-  late String _chosenTeamName;
 
-  late String _competition;
-  late String _matchType;
   late String _startingPos; 
   late String _shootingPos;
   late int _climbAttempLevel;
   late int _climbLevel;
   late String _gatherBallsPos;
   late String _fromWhereClimbed;
-  late String _alliance; 
 
   bool _wasRobotOnField = true;
   bool _didHPScore = false;
@@ -52,7 +59,6 @@ class _ScoutingScreenState extends State<ScoutingScreen > {
   int _teleOpLowScored = 0;
   int _teleOpLowMissed = 0;
 
-  final TextEditingController _matchNumberController = TextEditingController();
   final TextEditingController _scouterNameController = TextEditingController();
   final TextEditingController _climbBeforeEndSecsController = TextEditingController();
   final TextEditingController _defenceController = TextEditingController();
@@ -60,7 +66,6 @@ class _ScoutingScreenState extends State<ScoutingScreen > {
   final TextEditingController _strategyController = TextEditingController();
   final TextEditingController _shootingPrepTimeController = TextEditingController();
 
-  late String _matchNumberText;
   late String _scouterNameText;
   late String _climbBeforeEndSecsText;
   late int _climbBeforeEndSecsNum;
@@ -73,18 +78,6 @@ class _ScoutingScreenState extends State<ScoutingScreen > {
   @override
   void initState() {
     super.initState();
-
-    _matchNumberController.addListener(() {
-      _matchNumberText = _matchNumberController.text;
-      _matchNumberController.value = _matchNumberController.value.copyWith(
-        text: _matchNumberText,
-        selection: TextSelection(
-          baseOffset: _matchNumberText.length, 
-          extentOffset: _matchNumberText.length
-          ),
-        composing: TextRange.empty
-      );
-     });
 
      _scouterNameController.addListener(() {
       _scouterNameText = _scouterNameController.text;
@@ -164,33 +157,8 @@ class _ScoutingScreenState extends State<ScoutingScreen > {
   // TODO: add all controllers
   @override
   void dispose() {
-    _matchNumberController.dispose();
     _scouterNameController.dispose();
     super.dispose();
-  }
-
-  _saveCompetition(String? competition) {
-    if(competition is String) {
-      setState(() => _competition = competition);
-    }
-  }
-
-  _saveMatchType(String? matchType) {
-    if(matchType is String) {
-      setState(() => _matchType = matchType);
-    }
-  }
-
-    _saveChosenTeam(String? chosenTeamNum) {
-    if(chosenTeamNum is String) {
-      setState(() => _chosenTeamNum = chosenTeamNum);
-
-      for (var team in teams) {
-        if(team.num.toString() == _chosenTeamNum){
-          _chosenTeamName = team.name.toString();
-        }
-       }
-    }
   }
 
   _saveStartingPos(String? startingPos) {
@@ -226,12 +194,6 @@ class _ScoutingScreenState extends State<ScoutingScreen > {
   _saveFromWhereClimbed(String? fromWhereClimbed) {
     if(fromWhereClimbed is String) {
       setState(() => _fromWhereClimbed = fromWhereClimbed);
-    }
-  }
-
-  _saveAlliance(String? alliance) {
-    if(alliance is String) {
-      setState(() => _alliance = alliance);
     }
   }
 
@@ -349,54 +311,6 @@ class _ScoutingScreenState extends State<ScoutingScreen > {
                   Expanded(
                     child: Padding(
                       padding: smallPaddingSides,
-                      child: DropdownButtonFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          fillColor: secondaryColor
-                        ),
-                        hint: const Text('Choose competition'),
-                        items: competitionsMenuItems, 
-                        onChanged: _saveCompetition,
-                        validator: (String? value) => (value == null) ? 'Must select competition before sending data' : null
-                        ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: smallPaddingSides,
-                      child: DropdownButtonFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          fillColor: secondaryColor
-                        ),
-                        hint: const Text('Choose match type'),
-                        items: matchTypeMenuItems, 
-                        onChanged: _saveMatchType,
-                        validator: (String? value) => (value == null) ? 'Must select match type before sending data' : null
-                        ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: smallPaddingSides,
-                      child: TextFormField(
-                        controller: _matchNumberController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.fromLTRB(11.0, 22.9, 22.9, 22.9),
-                          hintText: 'Input Match Number',
-                          border: OutlineInputBorder(),
-                          fillColor: secondaryColor
-                          ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: smallPaddingSides,
                       child: TextFormField(
                         controller: _scouterNameController,
                         keyboardType: TextInputType.name,
@@ -413,38 +327,6 @@ class _ScoutingScreenState extends State<ScoutingScreen > {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      constraints: const BoxConstraints(maxWidth: 200.0),
-                      child: Padding(
-                        padding: smallPadding,
-                        child: DropdownButtonFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          fillColor: secondaryColor
-                        ),
-                        hint: const Text('Choose Alliance'),
-                        items: allianceMenuItems, 
-                        onChanged: _saveAlliance,
-                        validator: (String? value) => (value == null) ? 'Must select team before sending data' : null
-                        )
-                        ),
-                    ),
-                    Container(
-                      constraints: const BoxConstraints(maxWidth: 500.0),
-                      child: Padding(
-                        padding: smallPadding,
-                        child: DropdownButtonFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          fillColor: secondaryColor
-                        ),
-                        hint: const Text('Choose Team'),
-                        items: _teamsList, 
-                        onChanged: _saveChosenTeam,
-                        validator: (String? value) => (value == null) ? 'Must select team before sending data' : null
-                        )
-                        ),
-                    ),
                     ClipRRect(
                       child: Container(
                         decoration: BoxDecoration(
@@ -947,8 +829,8 @@ class _ScoutingScreenState extends State<ScoutingScreen > {
                   ),
                   ElevatedButton(
                     onPressed: () => insertInfo(
-                      _chosenTeamNum, 
-                      _chosenTeamName, 
+                      widget.teamNumber, 
+                      widget.matchId,
                       _autoHighScored, 
                       _autoHighMissed, 
                       _autoLowScored, 
@@ -963,7 +845,7 @@ class _ScoutingScreenState extends State<ScoutingScreen > {
                       _climbAttempLevel, 
                       _climbLevel, 
                       _fromWhereClimbed, 
-                      _alliance, 
+                      widget.alliance, 
                       _startingPos, 
                       _gatherBallsPos, 
                       _wasRobotOnField, 

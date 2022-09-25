@@ -11,13 +11,9 @@ import 'package:frc_scouting_app/views/big_screen_views/teams_info/quick_data.da
 class DesktopMenu extends StatelessWidget{
   
     DesktopMenu({
-    //   required this.teamName
       required this.page
     });
     final PageController page;
-
-    // final String teamNum;
-    // final String teamName;
 
   @override
   Widget build(BuildContext context) {

@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 void insertInfo(
   teamNum, 
-  teamName, 
+  matchID,
   autoUpScored, 
   autoUpMissed, 
   autoLowScored, 
@@ -36,9 +36,8 @@ void insertInfo(
     try{
       final response = await http.post(Uri.parse("http://127.0.0.1/2230_scouting/insert_robot_info.php"), body: {
         "id": "",
-        "match_id": "1", // TODO: change to corresponding chosen match_id
+        "match_id": "$matchID", 
         "team_number": "$teamNum",
-        "team_name": "$teamName",
         "alliance": "$alliance",
         "auto_up_scored": "$autoUpScored",
         "auto_up_missed": "$autoUpMissed",
