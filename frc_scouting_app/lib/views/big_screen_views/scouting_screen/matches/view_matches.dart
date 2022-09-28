@@ -6,7 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:frc_scouting_app/misc/constants.dart';
 import 'package:frc_scouting_app/views/big_screen_views/scouting_screen/input_scouting_info/scouting_screen.dart';
 
-// TODO: need to post data to db when certain team wins
+// TODO: need to post data to db when certain team wins 
+// NOTE: can change isMatchOver func, have it get ids and return a map of id and if match is over or not, instead of calling it every time, and check also based on alliance color 
 
 enum MatchInfoSortedIndexes {id, competition, number, type, wonAlliance, r1, r2, r3, b1, b2, b3}
 class ViewMatches extends StatefulWidget{
@@ -34,7 +35,6 @@ class _ViewMatchesState extends State<ViewMatches>{
   Widget build(BuildContext context){
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    print('burgur');
     List<String> ids = matchesIds.toString().substring(1, matchesIds.toString().length - 1).replaceAll(RegExp(r'{match_id: '), '').replaceAll('}', ' ').replaceAll(' ', '').split(','); // FormatException happenns here bcs line converts empty list to int list OR its empty, in that case make a defualt case
     print(ids);
 
@@ -57,6 +57,7 @@ class _ViewMatchesState extends State<ViewMatches>{
                   return ExpansionPanel(
                     headerBuilder: (context, isExpanded) => head(
                       id: matchInfoSorted[MatchInfoSortedIndexes.id.index],
+                      idsList: ids,
                       competition: matchInfoSorted[MatchInfoSortedIndexes.competition.index],
                       matchNumber: matchInfoSorted[MatchInfoSortedIndexes.number.index],
                       matchType: matchInfoSorted[MatchInfoSortedIndexes.type.index],
@@ -92,11 +93,15 @@ class _ViewMatchesState extends State<ViewMatches>{
 
    head({
     required String id, 
+    required List<String> idsList,
     required String competition, 
     required String matchNumber, 
     required String matchType, 
     required String wonAlliance}) {
-    Color isMatchOverColor = getIsMatchOverColor(wonAlliance);
+    Color isMatchOverColor = getIsMatchOverColor(id, idsList);
+    // if() // if match is over and won alliance was not declared, change it to the alliance that won
+
+    print(isMatchOver(id, idsList));
     return SafeArea(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -118,7 +123,7 @@ class _ViewMatchesState extends State<ViewMatches>{
           )
           ),
           Builder(builder: ((context) {
-            if(wonAlliance == "red" || wonAlliance == "blue"){ // if not red or blue, wonAlliance will most likely be OM(ongoing match), if its not OM most likely there's an error
+            if(isMatchOverColor == widget.EMcolor){ 
               return Text(wonAlliance,
               style: GoogleFonts.roboto(
                 fontSize: 18,
@@ -252,19 +257,20 @@ class _ViewMatchesState extends State<ViewMatches>{
     return false;
   }
 
-  Color getIsMatchOverColor(String wonAlliance){
+  Color getIsMatchOverColor(String id, List<String> ids){
     /*
     red = match over
     green = match not over  
     */
-    if(wonAlliance == "red" || wonAlliance == "blue") {return widget.EMcolor;}
+    if(isMatchOver(id, ids)) {return widget.EMcolor;}
     else {return widget.OMcolor;}
   }
   
   Color getWonAllianceColor(String alliance){
     if(alliance == "red") {return redTeamColor;}
     else if (alliance == "blue") {return blueTeamColor;}
-    else {return widget.OMcolor;}
+    // if program got here, there is most likely an error
+    else {return widget.OMcolor;} 
   }
 
   Color getAllianceColorByNumber(int alliance){

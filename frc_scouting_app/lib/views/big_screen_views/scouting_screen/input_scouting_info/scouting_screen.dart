@@ -9,6 +9,7 @@ import 'package:frc_scouting_app/views/common_views/divider_with_text.dart';
 Try https://pub.dev/packages/flutter_picker for phone 
 clear validators (or make them usefull)                                     
 make first screen history/adding new scouting entries, if admin you can make new scouting entry.
+clean..., this section is a mess
 */
 
 class ScoutingScreen extends StatefulWidget {
@@ -294,17 +295,29 @@ class _ScoutingScreenState extends State<ScoutingScreen > {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            IconButton(
-              onPressed: () => Navigator.pop(context), 
-              icon: const Icon(Icons.arrow_back)
-              ),
-            Container(
-              color: backroundColor,
-              child: Column(children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: IconButton(
+                onPressed: () => Navigator.pop(context), 
+                icon: const Icon(Icons.arrow_back)
+                ),
+            ),
+            Column(
+              children: [
                 DividerWithTitle(
                   title: 'Match Details', 
                   color: secondaryColor
-                  ),
+                ),
+                Text("""
+match: ${widget.competition} - match type: ${widget.matchType} - match number: ${widget.matchNumber}
+                        alliance: ${widget.alliance} - team number: ${widget.teamNumber}
+""",
+                  style: const TextStyle(
+                    fontSize: 28.0,
+                    color: Colors.white,
+                    fontFamily: 'vanguardian'
+                  )
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -322,36 +335,32 @@ class _ScoutingScreenState extends State<ScoutingScreen > {
                           ),
                       ),
                     ),
-                  )
-                ]),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ClipRRect(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: secondaryColor),
-                          borderRadius: const BorderRadius.all(Radius.circular(5))
+                  ),
+                  ClipRRect(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: secondaryColor),
+                      borderRadius: const BorderRadius.all(Radius.circular(5))
+                    ),
+                    child: Padding(
+                      padding: checkboxPadding,
+                      child: Row(
+                        children:[
+                        Checkbox(  
+                          value: _wasRobotOnField, 
+                          onChanged: _saveWasRobotOnFIeld,
+                          activeColor: Colors.blueAccent,
                         ),
-                        child: Padding(
-                          padding: checkboxPadding,
-                          child: Row(
-                            children:[
-                            Checkbox(  
-                              value: _wasRobotOnField, 
-                              onChanged: _saveWasRobotOnFIeld,
-                              activeColor: Colors.blueAccent,
-                            ),
-                            const Text('Was robot on field?',
-                                style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.grey
-                                )
+                        const Text('Was robot on field?',
+                            style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.grey
                             )
-                                    ]),
                         )
-                        ),
+                      ]),
                     )
+                  ),
+                ),
                 ]),
                 DividerWithTitle(
                   title: 'Auto', 
@@ -588,281 +597,281 @@ class _ScoutingScreenState extends State<ScoutingScreen > {
                       ),
                     )
                   ]),
-                  DividerWithTitle(
-                    title: 'Climb',
-                    color: secondaryColor
+                DividerWithTitle(
+                  title: 'Climb',
+                  color: secondaryColor
+                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                    constraints: const BoxConstraints(maxWidth: 400.0),
+                    child: Padding(
+                      padding: smallPadding,
+                      child: TextFormField(
+                        controller: _climbBeforeEndSecsController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(11.0, 22.9, 22.9, 22.9),
+                          hintText: 'Time (in seconds) robot started to climbe before end',
+                          border: OutlineInputBorder(),
+                          fillColor: secondaryColor
+                          ),
+                      ),
                     ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                      constraints: const BoxConstraints(maxWidth: 400.0),
+                  )
+                  ],
+                ),
+                Image.asset(
+                    'lib/assets/climb_from.png'
+                  ),
+                Container(
+                    constraints: const BoxConstraints(maxWidth: 400.0),
+                    child: Padding(
+                      padding: smallPadding,
+                      child: DropdownButtonFormField(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          fillColor: secondaryColor
+                        ),
+                        hint: const Text('From where did robot attempt to climb?'),
+                        items: fromWhereClimbedMenuItems, 
+                        onChanged: _saveFromWhereClimbed,
+                        validator: (String? value) => (value == null) ? 'Must select match type before sending data' : null
+                        ),
+                    ),
+                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                    constraints: const BoxConstraints(maxWidth: 400.0),
+                    child: Padding(
+                      padding: smallPaddingSides,
+                      child: DropdownButtonFormField(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          fillColor: secondaryColor
+                        ),
+                        hint: const Text('To what level did robot attempt to climb?'),
+                        items: attemptedClimbLevelMenuItems, 
+                        onChanged: _saveClimbAttempLevel,
+                        validator: (String? value) => (value == null) ? 'Must select match type before sending data' : null
+                        ),
+                    ),
+                  ),
+                  Container(
+                    constraints: const BoxConstraints(maxWidth: 400.0),
+                    child: Padding(
+                      padding: smallPaddingSides,
+                      child: DropdownButtonFormField(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          fillColor: secondaryColor
+                        ),
+                        hint: const Text('Level robot climbed'),
+                        items: climbLevelMenuItems, 
+                        onChanged: _saveClimbLevel,
+                        validator: (String? value) => (value == null) ? 'Must select match type before sending data' : null
+                        ),
+                    ),
+                  ),
+                  ],
+                ),
+                DividerWithTitle(
+                  title: 'Conclusions',
+                  color: secondaryColor
+                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: smallPaddingSides,
+                        child: Container(
+                          constraints: const BoxConstraints(maxWidth: 300.0),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: secondaryColor),
+                            borderRadius: const BorderRadius.all(Radius.circular(5))
+                          ),
+                          child: Padding(
+                            padding: checkboxPadding,
+                            child: Row(
+                              children:[
+                              Checkbox(  
+                                value: _didRobotDefend, 
+                                onChanged: _saveDidRobotDefend,
+                                activeColor: Colors.blueAccent,
+                              ),
+                              const Text('Did robot defend?',
+                                  style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.grey
+                                  )
+                              )
+                            ]),
+                          )
+                          ),
+                      ),
+                    Container(
+                      constraints: const BoxConstraints(maxWidth: 300.0),
                       child: Padding(
-                        padding: smallPadding,
+                        padding: smallPaddingSides,
                         child: TextFormField(
-                          controller: _climbBeforeEndSecsController,
+                          controller: _shootingPrepTimeController,
                           keyboardType: TextInputType.number,
                           inputFormatters: <TextInputFormatter>[
                             FilteringTextInputFormatter.digitsOnly
                           ],
                           decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.fromLTRB(11.0, 22.9, 22.9, 22.9),
-                            hintText: 'Time (in seconds) robot started to climbe before end',
+                            contentPadding: EdgeInsets.fromLTRB(11.0, 12.5, 12.9, 22.5),
+                            hintText: 'Averege shooting prep time',
                             border: OutlineInputBorder(),
                             fillColor: secondaryColor
                             ),
                         ),
                       ),
-                    )
-                    ],
-                  ),
-                  Image.asset(
-                      'lib/assets/climb_from.png'
                     ),
-                  Container(
-                      constraints: const BoxConstraints(maxWidth: 400.0),
-                      child: Padding(
-                        padding: smallPadding,
-                        child: DropdownButtonFormField(
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            fillColor: secondaryColor
+                    Padding(
+                      padding: smallPaddingSides,
+                        child: Container(
+                          constraints: const BoxConstraints(maxWidth: 300.0),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: secondaryColor),
+                            borderRadius: const BorderRadius.all(Radius.circular(5))
                           ),
-                          hint: const Text('From where did robot attempt to climb?'),
-                          items: fromWhereClimbedMenuItems, 
-                          onChanged: _saveFromWhereClimbed,
-                          validator: (String? value) => (value == null) ? 'Must select match type before sending data' : null
-                          ),
-                      ),
-                    ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                      constraints: const BoxConstraints(maxWidth: 400.0),
-                      child: Padding(
-                        padding: smallPaddingSides,
-                        child: DropdownButtonFormField(
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            fillColor: secondaryColor
-                          ),
-                          hint: const Text('To what level did robot attempt to climb?'),
-                          items: attemptedClimbLevelMenuItems, 
-                          onChanged: _saveClimbAttempLevel,
-                          validator: (String? value) => (value == null) ? 'Must select match type before sending data' : null
-                          ),
-                      ),
-                    ),
-                    Container(
-                      constraints: const BoxConstraints(maxWidth: 400.0),
-                      child: Padding(
-                        padding: smallPaddingSides,
-                        child: DropdownButtonFormField(
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            fillColor: secondaryColor
-                          ),
-                          hint: const Text('Level robot climbed'),
-                          items: climbLevelMenuItems, 
-                          onChanged: _saveClimbLevel,
-                          validator: (String? value) => (value == null) ? 'Must select match type before sending data' : null
-                          ),
-                      ),
-                    ),
-                    ],
-                  ),
-                  DividerWithTitle(
-                    title: 'Conclusions',
-                    color: secondaryColor
-                    ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: smallPaddingSides,
-                          child: Container(
-                            constraints: const BoxConstraints(maxWidth: 300.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: secondaryColor),
-                              borderRadius: const BorderRadius.all(Radius.circular(5))
-                            ),
-                            child: Padding(
-                              padding: checkboxPadding,
-                              child: Row(
-                                children:[
-                                Checkbox(  
-                                  value: _didRobotDefend, 
-                                  onChanged: _saveDidRobotDefend,
-                                  activeColor: Colors.blueAccent,
-                                ),
-                                const Text('Did robot defend?',
-                                    style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.grey
-                                    )
-                                )
-                              ]),
-                            )
-                            ),
-                        ),
-                      Container(
-                        constraints: const BoxConstraints(maxWidth: 300.0),
-                        child: Padding(
-                          padding: smallPaddingSides,
-                          child: TextFormField(
-                            controller: _shootingPrepTimeController,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            decoration: const InputDecoration(
-                              contentPadding: EdgeInsets.fromLTRB(11.0, 12.5, 12.9, 22.5),
-                              hintText: 'Averege shooting prep time',
-                              border: OutlineInputBorder(),
-                              fillColor: secondaryColor
+                          child: Padding(
+                            padding: checkboxPadding,
+                            child: Row(
+                              children:[
+                              Checkbox(  
+                                value: _wasStrategyDifferent, 
+                                onChanged: _saveWasStrategyDifferent,
+                                activeColor: Colors.blueAccent,
                               ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: smallPaddingSides,
-                          child: Container(
-                            constraints: const BoxConstraints(maxWidth: 300.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: secondaryColor),
-                              borderRadius: const BorderRadius.all(Radius.circular(5))
-                            ),
-                            child: Padding(
-                              padding: checkboxPadding,
-                              child: Row(
-                                children:[
-                                Checkbox(  
-                                  value: _wasStrategyDifferent, 
-                                  onChanged: _saveWasStrategyDifferent,
-                                  activeColor: Colors.blueAccent,
-                                ),
-                                const SizedBox(
-                                  width: 200,
-                                  child: Text("""Was the robots strategy different then theyre other game?""",
-                                      maxLines: 2,
-                                      style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey
-                                      )
-                                  ),
-                                )
-                              ]),
-                            )
-                            ),
-                        ),
-                      Padding(
-                        padding: smallPaddingSides,
-                          child: Container(
-                            constraints: const BoxConstraints(maxWidth: 218.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: secondaryColor),
-                              borderRadius: const BorderRadius.all(Radius.circular(5))
-                            ),
-                            child: Padding(
-                              padding: checkboxPadding,
-                              child: Row(
-                                children:[
-                                Checkbox(  
-                                  value: _didWin, 
-                                  onChanged: _saveDidWin,
-                                  activeColor: Colors.blueAccent,
-                                ),
-                                const Text('Did robot won?',
+                              const SizedBox(
+                                width: 200,
+                                child: Text("""Was the robots strategy different then theyre other game?""",
+                                    maxLines: 2,
                                     style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 16,
                                     color: Colors.grey
                                     )
-                                )
-                              ]),
-                            )
-                            ),
-                        ),
-                    ],
-                  ),
-                  Padding(
-                    padding: smallPadding,
-                    child: TextFormField(
-                      minLines: 1,
-                      maxLines: 5,
-                      controller: _defenceController,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.fromLTRB(11.0, 22.9, 22.9, 22.9),
-                        hintText: 'Defence Comments',
-                        border: OutlineInputBorder(),
-                        fillColor: secondaryColor
-                        ),
-                    ),
-                    ),
-                  Padding(
-                    padding: smallPadding,
-                    child: TextFormField(
-                      minLines: 1,
-                      maxLines: 5,
-                      controller: _robotCommentsController,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.fromLTRB(11.0, 22.9, 22.9, 22.9),
-                        hintText: 'Robot Comments',
-                        border: OutlineInputBorder(),
-                        fillColor: secondaryColor
-                        ),
-                    ),
-                  ),
-                  Padding(
-                    padding: smallPadding,
-                    child: TextFormField(
-                      minLines: 1,
-                      maxLines: 5,
-                      controller: _strategyController,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.fromLTRB(11.0, 22.9, 22.9, 22.9),
-                        hintText: 'Strategy Comments',
-                        border: OutlineInputBorder(),
-                        fillColor: secondaryColor
-                        ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => insertInfo(
-                      widget.teamNumber, 
-                      widget.matchId,
-                      _autoHighScored, 
-                      _autoHighMissed, 
-                      _autoLowScored, 
-                      _autoLowMissed, 
-                      _teleOpHighScored, 
-                      _teleOpHighMissed, 
-                      _teleOpLowScored, 
-                      _teleOpLowMissed, 
-                      _shootingPos, 
-                      _shootingPrepTimeNum, 
-                      _climbBeforeEndSecsNum, 
-                      _climbAttempLevel, 
-                      _climbLevel, 
-                      _fromWhereClimbed, 
-                      widget.alliance, 
-                      _startingPos, 
-                      _gatherBallsPos, 
-                      _wasRobotOnField, 
-                      _didRobotWorkInAuto, 
-                      _didRobotWorkInTeleop, 
-                      _didHPScore, 
-                      _didRobotDefend, 
-                      _wasStrategyDifferent,
-                      _defenceText, 
-                      _robotCommentsText, 
-                      _strategyText,
-                      _scouterNameText,                  
+                                ),
+                              )
+                            ]),
+                          )
+                          ),
                       ),
-                    child: const Text('SAVE'),
-                  )
-              ],),
-            ),
+                    Padding(
+                      padding: smallPaddingSides,
+                        child: Container(
+                          constraints: const BoxConstraints(maxWidth: 218.0),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: secondaryColor),
+                            borderRadius: const BorderRadius.all(Radius.circular(5))
+                          ),
+                          child: Padding(
+                            padding: checkboxPadding,
+                            child: Row(
+                              children:[
+                              Checkbox(  
+                                value: _didWin, 
+                                onChanged: _saveDidWin,
+                                activeColor: Colors.blueAccent,
+                              ),
+                              const Text('Did robot won?',
+                                  style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.grey
+                                  )
+                              )
+                            ]),
+                          )
+                          ),
+                      ),
+                  ],
+                ),
+                Padding(
+                  padding: smallPadding,
+                  child: TextFormField(
+                    minLines: 1,
+                    maxLines: 5,
+                    controller: _defenceController,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.fromLTRB(11.0, 22.9, 22.9, 22.9),
+                      hintText: 'Defence Comments',
+                      border: OutlineInputBorder(),
+                      fillColor: secondaryColor
+                      ),
+                  ),
+                  ),
+                Padding(
+                  padding: smallPadding,
+                  child: TextFormField(
+                    minLines: 1,
+                    maxLines: 5,
+                    controller: _robotCommentsController,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.fromLTRB(11.0, 22.9, 22.9, 22.9),
+                      hintText: 'Robot Comments',
+                      border: OutlineInputBorder(),
+                      fillColor: secondaryColor
+                      ),
+                  ),
+                ),
+                Padding(
+                  padding: smallPadding,
+                  child: TextFormField(
+                    minLines: 1,
+                    maxLines: 5,
+                    controller: _strategyController,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.fromLTRB(11.0, 22.9, 22.9, 22.9),
+                      hintText: 'Strategy Comments',
+                      border: OutlineInputBorder(),
+                      fillColor: secondaryColor
+                      ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () => insertInfo(
+                    widget.teamNumber, 
+                    widget.matchId,
+                    _didWin,
+                    _autoHighScored, 
+                    _autoHighMissed, 
+                    _autoLowScored, 
+                    _autoLowMissed, 
+                    _teleOpHighScored, 
+                    _teleOpHighMissed, 
+                    _teleOpLowScored, 
+                    _teleOpLowMissed, 
+                    _shootingPos, 
+                    _shootingPrepTimeNum, 
+                    _climbBeforeEndSecsNum, 
+                    _climbAttempLevel, 
+                    _climbLevel, 
+                    _fromWhereClimbed, 
+                    widget.alliance, 
+                    _startingPos, 
+                    _gatherBallsPos, 
+                    _wasRobotOnField, 
+                    _didRobotWorkInAuto, 
+                    _didRobotWorkInTeleop, 
+                    _didHPScore, 
+                    _didRobotDefend, 
+                    _wasStrategyDifferent,
+                    _defenceText, 
+                    _robotCommentsText, 
+                    _strategyText,
+                    _scouterNameText,                  
+                    ),
+                  child: const Text('SAVE'),
+                )
+            ],),
           ],
         )
         ),

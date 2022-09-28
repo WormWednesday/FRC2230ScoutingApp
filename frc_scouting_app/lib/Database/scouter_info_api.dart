@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 void insertInfo(
   teamNum, 
   matchID,
+  didWin,
   autoUpScored, 
   autoUpMissed, 
   autoLowScored, 
@@ -25,7 +26,7 @@ void insertInfo(
   wasRobotOnField, 
   didRobotWorkInAuto, 
   didRobotWorkInTP, 
-  didHPScore, 
+  didHpScore, 
   didRobotDefend, 
   wasStrategyDifferent,
   defenseComments, 
@@ -38,6 +39,7 @@ void insertInfo(
         "id": "",
         "match_id": "$matchID", 
         "team_number": "$teamNum",
+        "did_win": "$didWin",
         "alliance": "$alliance",
         "auto_up_scored": "$autoUpScored",
         "auto_up_missed": "$autoUpMissed",
@@ -58,16 +60,24 @@ void insertInfo(
         "was_robot_on_field": "$wasRobotOnField",
         "did_robot_work_in_auto": "$didRobotWorkInAuto",
         "did_robot_work_in_teleop": "$didRobotWorkInTP",
-        "did_hp_score": "$didHPScore",
+        "did_hp_score": "$didHpScore",
         "did_robot_defend": "$didRobotDefend",
+        "was_strategy_different": "$wasStrategyDifferent",
         "defense_comments": "$defenseComments",
         "robot_comments": "$robotComments",
         "strategy_comments": "$strategyComments",
         "scouter_name": "$scouterName",
         "created_at": ""
       });
+      print("${response.body.toString()}");
     // ignore: avoid_print
     } catch(err) {print('$err lol');}
+    
+    List<dynamic> whatAllianceWon = await getWonAllianceFromMatchInfo(matchID);
+    print("$whatAllianceWon");
+    if(whatAllianceWon.toString().contains("OM")) {
+      updateAllianceWonFromMatchInfo(matchID);
+    }
 }
 
 Future<List<dynamic>> getMatchInfo() async{
@@ -91,6 +101,27 @@ Future<List<dynamic>> getMatchIdFromRobotInfo() async{
 
   return jsonData;
 } 
+
+Future<List<dynamic>> getWonAllianceFromMatchInfo(String id) async{
+  var jsonData = [];
+
+  try{
+    final response = await http.get(Uri.parse("http://127.0.0.1/2230_scouting/get_won_alliance_from_match_info.php?id=$id"));
+    jsonData = jsonDecode(response.body) as List;
+  } catch(err) {print('$err lol');}
+
+  return jsonData;
+} 
+
+Future<List<dynamic>> updateAllianceWonFromMatchInfo(String id) async{
+  try{
+    final response = await http.post("")
+  }
+
+}
+
+
+
 
 
 
