@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:frc_scouting_app/misc/constants.dart';
 import 'package:frc_scouting_app/misc/teams_list.dart';
+import 'package:frc_scouting_app/views/big_screen_views/teams_info/quick_team_data.dart';
 
 
 // ignore: use_key_in_widget_constructors
@@ -54,9 +55,10 @@ class TeamSearchBox extends StatelessWidget{
         ),
       ), 
       onSuggestionSelected: (final TeamCard? suggestions) {
-        page.jumpToPage(0);
-      },
-    );
+        Navigator.push(context,
+        MaterialPageRoute(builder: (context) => QuickTeamData(teamNum: suggestions!.num.toString()
+        )));},
+    );      
   }
 
 }

@@ -11,16 +11,22 @@ if($conn->connect_error){
 
 $id = $_GET['id'];
 
-$sql = "SELECT what_alliance_won FROM match_info WHERE id = '$id'";
-$result = $conn->query($sql);
-$response = array();
-if($result->num_rows > 0){
-    while($row = $result->fetch_assoc()){
-        array_push($response, $row);
+if(isset($id)) {
+    $sql = 'SELECT won_alliance FROM match_info WHERE id='.$id.'';
+    $result = $conn->query($sql);
+    $response = array();
+    if($result->num_rows > 0){
+        while($row = $result->fetch_assoc()){
+            array_push($response, $row);
+        }
     }
+    
+    $conn->close();
+    header('Content-Type: application/json');
+    echo json_encode($response);    
+} else {
+    $conn->close();
 }
 
-$conn->close();
-header('Content-Type: application/json');
-echo json_encode($response);
+
 ?>

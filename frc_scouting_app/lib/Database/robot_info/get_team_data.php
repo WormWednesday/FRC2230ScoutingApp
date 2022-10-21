@@ -9,7 +9,7 @@ if($conn->connect_error){
     die('Connection failed: ' . $conn->connect_error);
 }
 
-$sql = 'SELECT * FROM scouting_match_info';
+$sql = 'SELECT * FROM robot_info';
 $result = $conn->query($sql);
 $response = array();
 if($result->num_rows > 0){

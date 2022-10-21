@@ -5,28 +5,24 @@ import 'package:frc_scouting_app/misc/constants.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:frc_scouting_app/views/big_screen_views/scouting_screen/input_scouting_info/scouting_screen.dart';
 import 'package:frc_scouting_app/views/big_screen_views/scouting_screen/matches/view_matches.dart';
-import 'package:frc_scouting_app/views/big_screen_views/teams_info/quick_data.dart';
+import 'package:frc_scouting_app/views/big_screen_views/teams_info/quick_team_data.dart';
 
-
-class DesktopMenu extends StatelessWidget{
-  
-    DesktopMenu({
-      required this.page
-    });
-    final PageController page;
+class DesktopMenu extends StatelessWidget {
+  DesktopMenu({required this.page});
+  final PageController page;
 
   @override
   Widget build(BuildContext context) {
-      double width = MediaQuery.of(context).size.width;
-      return Container(
+    double width = MediaQuery.of(context).size.width;
+    return Container(
         constraints: BoxConstraints(maxWidth: width - 100),
         color: primaryColorDark,
         child: SafeArea(
-          child: Scaffold(
-            backgroundColor: primaryColorDark,
-            body: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
+            child: Scaffold(
+          backgroundColor: backroundColor,
+          body: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
               SideMenu(
                 controller: page,
                 style: SideMenuStyle(
@@ -45,26 +41,26 @@ class DesktopMenu extends StatelessWidget{
                   // ),
                 ),
                 title: const SizedBox(height: 10),
-                  // Column(
-                  //   children: [
-                  //     Padding(
-                  //       padding: smallPadding,
-                  //       child: ConstrainedBox(
-                  //         constraints: const BoxConstraints(
-                  //           maxHeight: 150,
-                  //           maxWidth: 150,
-                  //         ),
-                  //         child: Image.asset(
-                  //           'lib/assets/logo.png',
-                  //         ),
-                  //       )
-                  //     ),
-                  //     const Divider(
-                  //       indent: 8.0,
-                  //       endIndent: 8.0,
-                  //     ),
-                  //   ],
-                  // ),
+                // Column(
+                //   children: [
+                //     Padding(
+                //       padding: smallPadding,
+                //       child: ConstrainedBox(
+                //         constraints: const BoxConstraints(
+                //           maxHeight: 150,
+                //           maxWidth: 150,
+                //         ),
+                //         child: Image.asset(
+                //           'lib/assets/logo.png',
+                //         ),
+                //       )
+                //     ),
+                //     const Divider(
+                //       indent: 8.0,
+                //       endIndent: 8.0,
+                //     ),
+                //   ],
+                // ),
                 items: [
                   SideMenuItem(
                     priority: 0,
@@ -112,10 +108,10 @@ class DesktopMenu extends StatelessWidget{
                 child: PageView(
                   controller: page,
                   children: [
-                    QuickData(
-                      // teamName: teamName,
-                      // teamNum: teamNum,
-                    ),
+                    QuickTeamData(
+                        // teamName: teamName,
+                        teamNum: "2230",
+                        ),
                     Container(
                       color: Colors.white,
                       child: const Center(
@@ -148,9 +144,7 @@ class DesktopMenu extends StatelessWidget{
                 ),
               ),
             ],
-              ),
-            )
-          )
-      );
+          ),
+        )));
   }
 }

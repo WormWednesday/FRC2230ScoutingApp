@@ -18,7 +18,7 @@ class DividerWithTitle extends StatelessWidget {
     return Row(
       children: <Widget>[
         leftLine,
-        Text(title, style: const TextStyle(color: secondaryColor)),
+        Text(title, style: const TextStyle(color: secondaryColor, fontSize: 14)),
         rightLine,
       ],
     );
